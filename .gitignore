@@ -1,0 +1,9 @@
+.git/
+__pycache__/
+**/__pycache__/
+_gitignore/
+**/.gitignore/*
+_privateData/*
+_publicData/*
+_sde/*
+.env

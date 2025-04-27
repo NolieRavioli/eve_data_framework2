@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<!-- landing page -->
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>EVE Data Dashboard</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 2em;
+            background-color: #f8f9fa;
+            color: #333;
+        }
+
+        .navbar {
+            background-color: #343a40;
+            overflow: hidden;
+            padding: 1em;
+            border-radius: 5px;
+        }
+
+            .navbar a, .dropdown-btn {
+                color: white;
+                padding: 0.5em 1em;
+                text-decoration: none;
+                float: left;
+                font-weight: bold;
+            }
+
+                .navbar a:hover, .dropdown:hover .dropdown-btn {
+                    background-color: #495057;
+                }
+
+        .dropdown {
+            float: left;
+            overflow: hidden;
+        }
+
+        .dropdown-content {
+            display: none;
+            position: absolute;
+            background-color: #495057;
+            min-width: 160px;
+            z-index: 1;
+            border-radius: 0 0 5px 5px;
+        }
+
+            .dropdown-content a {
+                color: white;
+                padding: 0.75em 1em;
+                display: block;
+                text-decoration: none;
+            }
+
+                .dropdown-content a:hover {
+                    background-color: #6c757d;
+                }
+
+        .dropdown:hover .dropdown-content {
+            display: block;
+        }
+
+        .content {
+            margin-top: 2em;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="navbar">
+        <a href="{{ url_for('dashboard.home') }}">Home</a>
+
+        {% if logged_in %}
+        <a href="{{ url_for('auth.add_toon') }}">Add Toon</a>
+        <a href="{{ url_for('auth.logout') }}">Logout</a>
+
+        <div class="dropdown">
+            <a class="dropdown-btn" href="#">Update ▼</a>
+            <div class="dropdown-content">
+                <a href="{{ url_for('update_personal.update_assets') }}">Update Assets</a>
+                <a href="{{ url_for('update_personal.update_industry') }}">Update Industry Jobs</a>
+                <a href="{{ url_for('update_personal.update_wallet') }}">Update Wallet</a>
+                <a href="{{ url_for('update_personal.update_skills') }}">Update Skills</a>
+                <a href="{{ url_for('update_personal.update_bookmarks') }}">Update Bookmarks</a>
+                <hr style="margin: 0.5em;">
+                <a href="{{ url_for('update_public.update_public_structures') }}">Update Public Structures</a>
+                <a href="{{ url_for('update_public.update_public_market') }}">Update Public Market</a>
+                <a href="{{ url_for('update_public.update_public_contracts') }}">Update Public Contracts</a>
+                <a href="{{ url_for('update_public.update_public_sde') }}">Update SDE</a>
+            </div>
+        </div>
+
+        {% else %}
+        <a href="{{ url_for('auth.login') }}">Login</a>
+        {% endif %}
+    </div>
+
+    <div class="content">
+
+        <h1>EVE Data Dashboard</h1>
+
+        {% if linked_toons %}
+        <div>
+            <h3>Your Linked Toons:</h3>
+            <ul>
+                {% for toon_id in linked_toons %}
+                <li>Character ID: {{ toon_id }}</li>
+                {% endfor %}
+            </ul>
+        </div>
+        {% endif %}
+
+        {% if logged_in %}
+        <h2>Recent Industry Jobs</h2>
+        <ul>
+            {% for job in industry_jobs %}
+            <li>{{ name_from_id(job.blueprint_type_id) }}, Status: {{ job.status }}</li>
+            {% endfor %}
+        </ul>
+        {% if slot_status %}
+        <h2>Industry Slot Status</h2>
+        <ul>
+            {% for msg in slot_status %}
+            <li>{{ msg }}</li>
+            {% endfor %}
+        </ul>
+        {% endif %}
+        <h2>Wallet Transactions</h2>
+        <ul>
+            {% for txn in wallet_txns %}
+            <li>Amount: {{ txn.amount }} ISK, Type: {{ txn.ref_type }}</li>
+            {% endfor %}
+        </ul>
+
+        <h2>Assets</h2>
+        <ul>
+            {% for asset in assets %}
+            <li>{{ name_from_id(asset.type_id) }}, Quantity: {{ asset.quantity }}</li>
+            {% endfor %}
+        </ul>
+
+        <h2>Bookmarks</h2>
+        <ul>
+            {% for bm in bookmarks %}
+            <li>Label: {{ bm.label or "No label" }}</li>
+            {% endfor %}
+        </ul>
+
+        {% else %}
+        <p>You are not logged in. Click "Login" above to get started.</p>
+        {% endif %}
+
+    </div>
+
+</body>
+</html>
